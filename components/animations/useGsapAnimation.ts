@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, RefObject } from "react";
+import { useLayoutEffect, useRef, type RefObject } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 export function useGsapContext<T extends HTMLElement>(
   setup: (context: gsap.Context, el: T) => void,
   deps: unknown[] = []
-): RefObject<T | null> {
+): RefObject<T> {
   const scopeRef = useRef<T | null>(null);
 
   useLayoutEffect(() => {
@@ -36,10 +36,9 @@ export function useGsapContext<T extends HTMLElement>(
       ctx.revert();
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
-  return scopeRef;
+  return scopeRef as RefObject<T>;
 }
 
 export { gsap, ScrollTrigger };
