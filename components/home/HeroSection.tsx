@@ -1,60 +1,146 @@
+
 "use client";
 
 import Image from "next/image";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
-import { useGsapContext, gsap } from "@/components/animations/useGsapAnimation";
+import {
+  useGsapContext,
+  gsap,
+} from "@/components/animations/useGsapAnimation";
 
 export default function HeroSection() {
   const sectionRef = useGsapContext<HTMLDivElement>((ctx, el) => {
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-    tl.from(el.querySelectorAll(".hero-eyebrow"), { opacity: 0, y: 16, duration: 0.5 })
-      .from(el.querySelectorAll(".hero-title"), { opacity: 0, y: 24, duration: 0.6 }, "-=0.25")
-      .from(el.querySelectorAll(".hero-sub"), { opacity: 0, y: 16, duration: 0.5 }, "-=0.3")
-      .from(el.querySelectorAll(".hero-cta"), { opacity: 0, y: 16, duration: 0.5, stagger: 0.1 }, "-=0.25")
-      .from(el.querySelectorAll(".hero-media"), { opacity: 0, scale: 0.96, duration: 0.7 }, "-=0.5");
+    const timeline = gsap.timeline({
+      defaults: {
+        ease: "power2.out",
+      },
+    });
+
+    const title = el.querySelector(".hero-title");
+    const subtitle = el.querySelector(".hero-sub");
+    const buttons = el.querySelectorAll(".hero-cta");
+    const visual = el.querySelector(".hero-visual");
+
+    if (title) {
+      timeline.from(title, {
+        opacity: 0,
+        y: 24,
+        duration: 0.6,
+      });
+    }
+
+    if (subtitle) {
+      timeline.from(
+        subtitle,
+        {
+          opacity: 0,
+          y: 16,
+          duration: 0.45,
+        },
+        "-=0.3"
+      );
+    }
+
+    if (buttons.length) {
+      timeline.from(
+        buttons,
+        {
+          opacity: 0,
+          y: 14,
+          duration: 0.4,
+          stagger: 0.08,
+        },
+        "-=0.2"
+      );
+    }
+
+    if (visual) {
+      timeline.from(
+        visual,
+        {
+          opacity: 0,
+          scale: 1.03,
+          duration: 0.8,
+        },
+        "-=0.6"
+      );
+    }
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-gradient-to-br from-brand-dark via-brand to-brand-dark text-white"
+      className="relative isolate overflow-hidden bg-brand-darker"
     >
-      <Container className="grid grid-cols-1 items-center gap-8 py-14 md:grid-cols-2 md:py-20">
-        <div>
-          <p className="hero-eyebrow mb-2 text-sm font-medium text-brand-accent">
-            Taraz Tea — খাঁটি চায়ের ঠিকানা
-          </p>
-          <h1 className="hero-title mb-4 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-            সরাসরি চা বাগান থেকে
-            <br />
-            মানসম্মত চা
-          </h1>
-          <p className="hero-sub mb-8 max-w-md text-base text-white/85 sm:text-lg">
-            প্রকৃতির স্বাদ, আপনার প্রাঙ্গনে।
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="hero-cta bg-brand-accent text-brand-darker hover:bg-brand-accent/90">
-              এখনই কিনুন
-            </Button>
-            <Button size="lg" variant="outline" className="hero-cta border-white text-white hover:bg-white/10">
-              বিস্তারিত জানুন
-            </Button>
-          </div>
-        </div>
+      {/* Hero Background Image */}
+      <Image
+        src="/images/tea-hero-banner.png"
+        alt="Premium tea garden with fresh tea leaves and tea cup"
+        fill
+        priority
+        quality={90}
+        sizes="100vw"
+        className="absolute inset-0 -z-20 object-cover object-center"
+      />
 
-        <div className="hero-media relative mx-auto aspect-square w-full max-w-md">
-          <div className="absolute inset-0 rounded-full bg-white/10 blur-2xl" />
-          <Image
-            src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=800&auto=format&fit=crop"
-            alt="Taraz Tea garden and fresh tea cup"
-            fill
-            priority
-            sizes="(max-width: 768px) 90vw, 500px"
-            className="relative rounded-3xl object-cover shadow-2xl"
+      {/* Dark Green Overlay — Stronger on the Left */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-darker/95 via-brand-dark/75 to-brand-dark/20" />
+
+      {/* Additional Mobile Overlay */}
+      <div className="absolute inset-0 -z-10 bg-brand-darker/20 sm:hidden" />
+
+      <Container className="relative">
+        <div className="grid min-h-[390px] items-center py-12 sm:min-h-[440px] sm:py-14 md:min-h-[490px] lg:min-h-[510px] lg:grid-cols-[1fr_0.8fr]">
+          {/* Hero Content */}
+          <div className="relative z-10 max-w-[620px] text-white">
+            <h1 className="hero-title text-[2rem] font-extrabold leading-[1.2] tracking-tight sm:text-4xl md:text-[2.75rem] lg:text-5xl">
+              সরাসরি চা বাগান থেকে
+              <br />
+              <span className="text-brand-accent">
+                মানসম্মত চা
+              </span>
+            </h1>
+
+            <p className="hero-sub mt-4 max-w-md text-sm leading-7 text-white/90 sm:text-base md:text-lg">
+              প্রকৃতির স্বাদ, আপনার প্রতিদিনের প্রশান্তি
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
+              <Button
+                size="md"
+                className="hero-cta rounded-lg bg-brand text-white shadow-lg transition-colors hover:bg-brand-dark"
+              >
+                এখনই কিনুন
+                <span aria-hidden="true" className="ml-2">
+                  →
+                </span>
+              </Button>
+
+              <Button
+                size="md"
+                variant="outline"
+                className="hero-cta rounded-lg border-white/80 bg-white text-brand-darker shadow-lg transition-colors hover:bg-brand-accent hover:text-brand-darker"
+              >
+                কালেকশন দেখুন
+                <span aria-hidden="true" className="ml-2">
+                  →
+                </span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Visual Space for Tea Cup / Leaves in Background */}
+          <div
+            aria-hidden="true"
+            className="hero-visual pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block"
           />
         </div>
       </Container>
+
+      {/* Subtle Bottom Gradient for Seamless Section Transition */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-brand-darker/20 to-transparent" />
     </section>
   );
 }
